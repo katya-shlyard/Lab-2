@@ -146,9 +146,9 @@ public class Main {
         int[][] matrix1 = new int[3][3];
         for (int i = 0; i < (n - 2); i++) {
             for (int j = 0; j < (m - 2); j++) {
-                int mx1 = matrix[i][j] + matrix[i + 1][j] + matrix[i + 2][j] + matrix[i][j + 1] + matrix[i][j + 2] + matrix[i + 1][j + 1] + matrix[i + 2][j + 1] + matrix[i + 1][j + 2] + matrix[i + 2][j + 2];
-                if (mx1 == mx) {
-                    //вручную инициализирую все элементы подматрицы//
+                int mx1 = matrix[i][j] + matrix[i + 1][j] + matrix[i + 2][j] + matrix[i][j + 1] + matrix[i][j + 2] + matrix[i + 1][j + 1] + matrix[i + 2][j + 1] + matrix[i + 1][j + 2] + matrix[i + 2][j + 2];//вспомогательная переменная для суммы текущей строки
+                if (mx1 == mx) { //если текущая сумма равна максимальной, то начинаю инициализировать подматрицу 3х3
+                    //вручную присваиваю всем элементам подматрицы нужное значение//
                     matrix1[0][0] = matrix[i][j];
                     matrix1[0][1] = matrix[i][j + 1];
                     matrix1[0][2] = matrix[i][j + 2];
