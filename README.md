@@ -59,8 +59,7 @@
 |--------|---------------------|--------------|
 | n (Число 1) | `n`                 | `int`        |
 | m (Число 2) | `m`                 | `int`        | 
-| k (Число 3) | `k`                 | `int`        |
-| массив | `a`                 | `int`        |
+| массив | `matrix`                 | `int`        |
 
 Для вывода результата надо создать:
 - целочисленные переменные для индексов `i`и `j`.
@@ -107,107 +106,167 @@
 
 ```java
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Scanner;
-
+import java.util.Random;
 public class Main {
-   public static Scanner in = new Scanner(System.in);
-   public static PrintStream out = System.out;
-
-   public static void main(String[] args) {
-      //считываем с консоли размер массива n на m
-      out.println("Введите размер массива");
-      int n = in.nextInt();//считываем n
-      int m = in.nextInt();//считываем m
-      int[][] a = new int[n][m];//создаём массив a
-
-      // Заполнение массива
-      out.println("Введите элементы массива");
-      for (int i = 0; i < n; i++) {
-         for (int j = 0; j < m; j++) {
-            a[i][j] = in.nextInt();
-         }
-      }
-      out.println("Введите число k");
-      int k = in.nextInt();//считываем число k
-      out.println("Изначальный массив");
-      for (int i = 0; i < n; i++) {
-         for (int j = 0; j < m; j++) {
-            out.print(a[i][j] + " ");
-         }
-         out.println();
-      }
-
-      //2.Сортирует элементы каждой строки по возрастанию остатков от деления на K.
-      // Если остатки равны, сортирует элементы по убыванию.
-      //сортируем каждую строчку
-      for (int i = 0; i < n; i++) {
-         for (int j = 0; j < m - 1; j++) {
-            for (int l = j + 1; l < m; l++) {//создаём дополнительный цикл для сортировки
-               //создаём переменные для остатков при делении на k
-               int rem1 = a[i][j] % k;
-               int rem2 = a[i][l] % k;
-               //сравниваем остатки
-               if (rem1 > rem2 || (rem1 == rem2 && a[i][j] < a[i][l])) {
-                  //меняем местами,если условие выполняется
-                  int temp = a[i][j];
-                  a[i][j] = a[i][l];
-                  a[i][l] = temp;
-               }
+    public static Scanner in = new Scanner(System.in);
+    public static PrintStream out = System.out;
+    public static void main(String[] args) {
+        //вводим значения для n,m с клавиатуры//
+        int n = in.nextInt();
+        int m = in.nextInt();
+        //сосдаю матрицу(двумерный массив)//
+        int[][] matrix = new int[n][m];
+        //инициализирую каждый элемент в матрице//
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                matrix[i][j] = in.nextInt();
             }
-         }
-      }
-      //вывод результата
-      out.println("Отсортированный массив");
-      for (int i = 0; i < n; i++) {
-         for (int j = 0; j < m; j++) {
-            out.print(a[i][j] + " ");
-         }
-         out.println();
-      }
-      //3.Находит произведение максимальных элементов каждой строки, а также их индексы в строках.
-      int pr = 1;//создаём переменную pr,которую будем использовать для подсчёта произведения
-      out.println("Индексы максимальных элементов");
-      for (int i = 0; i < n; i++) {
-         int maxi = 0;//создаём переменную maxi,в которой будет находится индекс максимального элемента
-         for (int j = 0; j < m; j++) {//ищет максимальный элемент
-            if (a[i][maxi] < a[i][j]){
-               maxi = j;
+        }
+        //просто вывожу матрицу чтоб посмотреть//
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                out.print(matrix[i][j] + " ");
             }
-         }
-         out.print("[" + i + "]"+"["+maxi +"]"+ " ");//выводит индексы максимальных элементов
-         pr *= a[i][maxi];//находим произведение максимальных элементов
-      }
-      out.println();
-      out.println("Произведение максимальных элементов");
-      out.println(pr);//выводим произведение максимальных элементов
-      // 4. Выводим элементы массива в транспонированном виде
-      out.println("Элементы массива в транспонированном виде:");
-      // Для транспонирования мы меняем местами i и j
-      for (int i = 0; i < m; i++) {
-         for (int j = 0; j < n; j++) {
-            out.print(a[j][i] + " ");
-         }
-         out.println();
-      }
+            out.println();
+        }
+        //ввожу переменную для поиска максимальной суммы подматрицы 3на3//
+        int mx = -111111000;
+        //поиск максимальной суммы элементов подматрицы 3х3//
+        for (int i = 0; i < (n - 2); i++) {
+            for (int j = 0; j < (m - 2); j++) {
+                int mx1 = matrix[i][j] + matrix[i + 1][j] + matrix[i + 2][j] + matrix[i][j + 1] + matrix[i][j + 2] + matrix[i + 1][j + 1] + matrix[i + 2][j + 1] + matrix[i + 1][j + 2] + matrix[i + 2][j + 2];
+                if (mx1 > mx) {
+                    mx = mx1;
+                }
+            }
+        }
+        //создаю новую матрицу 3на3 для подматрицы с максимальной суммой(mx)//
+        int[][] matrix1 = new int[3][3];
+        for (int i = 0; i < (n - 2); i++) {
+            for (int j = 0; j < (m - 2); j++) {
+                int mx1 = matrix[i][j] + matrix[i + 1][j] + matrix[i + 2][j] + matrix[i][j + 1] + matrix[i][j + 2] + matrix[i + 1][j + 1] + matrix[i + 2][j + 1] + matrix[i + 1][j + 2] + matrix[i + 2][j + 2];
+                if (mx1 == mx) {
+                    //вручную инициализирую все элементы подматрицы//
+                    matrix1[0][0] = matrix[i][j];
+                    matrix1[0][1] = matrix[i][j + 1];
+                    matrix1[0][2] = matrix[i][j + 2];
+                    matrix1[1][0] = matrix[i + 1][j];
+                    matrix1[2][0] = matrix[i + 2][j];
+                    matrix1[1][1] = matrix[i + 1][j + 1];
+                    matrix1[2][2] = matrix[i + 2][j + 2];
+                    matrix1[1][2] = matrix[i + 1][j + 2];
+                    matrix1[2][1] = matrix[i + 2][j + 1];
+                }
+            }
+        }
+        //вывод подматрицы 3х3 с максимальной суммой элементов//
+        for (int i = 0; i < matrix1.length; i++) {
+            for (int j = 0; j < matrix1[i].length; j++) {
+                out.print(matrix1[i][j] + " ");
+            }
+            out.println();
+        }
+        //сортировка исходной матрицы по возрастанию суммы элементов в строках методом пузырька//
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) { //создаём дополнительный цикл для сортировки
+                int sum1 = 0;//создаю 2 новые переменные для подсчета сумм элементов строк
+                int sum2 = 0;
+                for (int k = 0; k < matrix[j].length; k++) {
+                    sum1 += matrix[j][k];
+                }
+                for (int s = 0; s < matrix[j + 1].length; s++) {
+                    sum2 += matrix[j + 1][s];
+                }
+                if (sum1 > sum2) { //меняем местами,если условие выполняется
+                    int[] tmp = matrix[j + 1];
+                    matrix[j + 1] = matrix[j];
+                    matrix[j] = tmp;
+                }
+                //если сумма равна, сортирую элементы каждой строки по убыванию тоже методом пузырька//
+                else if (sum1 == sum2) {
+                    int[] tmp1 = matrix[j + 1];
+                    for (int ii = 0; ii < tmp1.length - 1; ii++) {
+                        for (int jj = 0; jj < tmp1.length - ii - 1; jj++) {
+                            if (tmp1[jj] > tmp1[jj + 1]) {
+                                int temp = tmp1[jj];
+                                tmp1[jj] = tmp1[jj + 1];
+                                tmp1[jj + 1] = temp;
+                            }
+                        }
+                    }
+                    matrix[j + 1] = tmp1;
+                    int[] tmp2 = matrix[j];
+                    for (int ii = 0; ii < tmp2.length - 1; ii++) {
+                        for (int jj = 0; jj < tmp2.length - ii - 1; jj++) {
+                            if (tmp2[jj] > tmp2[jj + 1]) {
+                                int temp = tmp2[jj];
+                                tmp2[jj] = tmp2[jj + 1];
+                                tmp2[jj + 1] = temp;
+                            }
+                        }
+                    }
+                    matrix[j] = tmp2;
+                }
+            }
+        }
+        //вывод матрицы просто посмотреть//
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                out.print(matrix[i][j] + " ");
+            }
+            out.println();
+        }
+        //ввожу вспомогательные переменные для дальнейшего вывода элементов "змейкой"//
+        int indexn = 0;
+        int indexm = 0;
+        int s = 0;
+        //вывод "змейкой"//
+        if (n <= m) {//1 случай - если столбцов больше строк
+            while (indexn < n && indexm < m) {
+                if (s % 2 == 0) {
+                    out.println(matrix[indexn][indexm]);
+                    indexm++;
+                    s += 1;
+                }
+                if (s % 2 == 1) {
+                    out.println(matrix[indexn][indexm]);
+                    indexn++;
+                    s++;
+                }
+            }
+        }
+        else {//второй случай - если строк больше столбцов
+            while (indexn < m && indexm < m) {
+                if (s % 2 == 0) {
+                    out.println(matrix[indexn][indexm]);
+                    indexm++;
+                }
+                if (s % 2 == 1) {
+                    out.println(matrix[indexn][indexm]);
+                    indexn++;
+                }
+                s++;
+            }
 
-      out.print("Массив,после удаления элементов кратных k");
-      out.println(" ");
-      //5. Удаляет из массива все элементы, которые являются кратными числу K,
-      // выводит получившийся массив массивов, а также количество удалённых элементов.
-      int count = 0;//создаём переменную для подсчёта суммы
-      for (int i = 0; i < n; i++) {
-         for (int j = 0; j < m; j++) {
-            if(a[i][j] % k != 0){//проверяем условие,что элемент массива не делится на k,если условие выполняется,увеличиваем сумму и выводим элемент массива
-               count++;
-               out.print(a[i][j] + " ");
+        }
+        //замена отрицательных элементов на их квадраты//
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] < 0) {
+                    matrix[i][j] = matrix[i][j] * matrix[i][j];
+                }
             }
-         }
-         out.println();
-      }
-      int c = (m*n)-count;
-      out.println("Количество элементов кратных k");
-      out.print(c);//выводим сумму элементов кратных k
-   }
+        }
+        //вывод обновленного массива//
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                out.print(matrix[i][j] + " ");
+            }
+            out.println();
+        }
+    }
 }
 ```
 
